@@ -5,11 +5,13 @@ import (
 	"fmt"
 	"os"
 	"strings"
-)
 
+	"github.com/ZacharyLozevski/pokedexcli/config"
+)
 
 func startRepl() {
   scanner := bufio.NewScanner(os.Stdin)
+  config := new(config.Config)
 
   for {
     // inital statement 
@@ -24,10 +26,9 @@ func startRepl() {
     input := scanner.Text()
     command := cleanInput(input)[0]
 
-
     cliCommand, ok := getCommands()[command]
     if ok {
-      err := cliCommand.callback()
+      err := cliCommand.callback(config)
 	  if err != nil {
 		fmt.Println(err)
 	  }
@@ -46,10 +47,11 @@ func cleanInput(text string) []string {
 type cliCommand struct {
   name          string
   description   string
-  callback      func() error
+  callback      func(*config.Config) error
 }
 
 func getCommands() map[string]cliCommand {
+
 	return map[string]cliCommand {
       "exit": {
           name: "exit",
@@ -61,5 +63,16 @@ func getCommands() map[string]cliCommand {
         description: "Display Help information",
         callback: commandHelp,
       },
+      "map": {
+        name: "map",
+        description: "Displays 20 location areas around the world",
+        callback: commandMap,
+      },
+      "mapb" : {
+        name: "mapb",
+        description: "Displays the previous 20 location areas around the world",
+        callback: commandMapb,
+      },
     }
+
 }
