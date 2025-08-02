@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 
-	"github.com/ZacharyLozevski/pokedexcli/config"
-	internal "github.com/ZacharyLozevski/pokedexcli/internal/pokeapi"
+	config "github.com/ZacharyLozevski/pokedexcli/config"
+	"github.com/ZacharyLozevski/pokedexcli/internal/pokeapi"
 )
 
 func printNames(names []string) {
@@ -13,14 +13,15 @@ func printNames(names []string) {
 	}
 }
 
-func commandMap(config *config.Config) error {
+func commandMap(config *config.Config, _ []string) error {
 	url := config.Next
 
-	if config.Next == "" {
-		url = "https://pokeapi.co/api/v2/location-area/" 
+	if url == "" {
+		fmt.Println("You cannot go forward!")
+		return nil
 	}
 
-	names, err := internal.LocationAreaAPIRequest(config, url)
+	names, err := pokeapi.GetLocationAreaData(config, url)
 	if err != nil {
 		return err
 	}
@@ -30,15 +31,15 @@ func commandMap(config *config.Config) error {
 	return nil
 }
 
-func commandMapb(config *config.Config) error {
+func commandMapb(config *config.Config, _ []string) error {
 	url := config.Previous
 	
-	if config.Previous == "" {
+	if url == "" {
 		fmt.Println("You cannot go back!")
 		return nil
 	}
 
-	names, err := internal.LocationAreaAPIRequest(config, url)
+	names, err := pokeapi.GetLocationAreaData(config, url)	
 	if err != nil {
 		return err
 	}
