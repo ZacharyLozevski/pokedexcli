@@ -24,7 +24,7 @@ func makeAPIRequest(method, url string, body io.Reader) ([]byte, error) {
 	return io.ReadAll(res.Body)
 }
 
-func locationAreaAPIRequest(url string) ([]byte, error) {
+func basicAPIRequest(url string) ([]byte, error) {
 	// make an api request
 	rawData, err := makeAPIRequest("GET", url, nil)
 	if err != nil {

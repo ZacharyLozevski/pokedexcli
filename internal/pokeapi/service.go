@@ -2,6 +2,7 @@ package pokeapi
 
 import (
 	"github.com/ZacharyLozevski/pokedexcli/config"
+	"github.com/ZacharyLozevski/pokedexcli/models"
 )
 
 func updateURLConfig(config *config.Config, data *PokemonData) {
@@ -28,7 +29,7 @@ func GetLocationAreaData(config *config.Config, url string) ([]string, error) {
 		rawData = cache
 	} else {
 		// make the api request if it is not cached
-		data, err := locationAreaAPIRequest(url)
+		data, err := basicAPIRequest(url)
 		if err != nil {
 			return nil, err
 		}
@@ -61,7 +62,7 @@ func GetLocationPokemon(config *config.Config, locationName string) ([]string, e
 	if cache, isCached := config.Cache.Get(url); isCached {
 		rawData = cache
 	} else {
-		data, err := locationAreaAPIRequest(url)	
+		data, err := basicAPIRequest(url)	
 		if err != nil {
 			return nil, err
 		}
@@ -85,4 +86,32 @@ func GetLocationPokemon(config *config.Config, locationName string) ([]string, e
 	}
 
 	return names, nil
+}
+
+func GetPokemon(config *config.Config, pokemonName string) (*models.Pokemon, error) {
+	url := "https://pokeapi.co/api/v2/pokemon/" + pokemonName + "/"
+	var rawData []byte 
+	
+	// check if cached
+	if cache, isCached := config.Cache.Get(url); isCached {
+		rawData = cache
+	} else {
+		data, err := basicAPIRequest(url)
+		if err != nil {
+			return &models.Pokemon{}, err
+		}
+
+		rawData = data
+
+		// update the cache with the data
+		config.Cache.Add(url, rawData)
+	}
+
+	// decode the pokemon data
+	pokemon, err := parsePokemon(rawData)
+	if err != nil {
+		return &models.Pokemon{}, err
+	}
+
+	return pokemon, nil
 }

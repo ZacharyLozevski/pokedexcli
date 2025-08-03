@@ -2,6 +2,8 @@ package pokeapi
 
 import (
 	"encoding/json"
+
+	"github.com/ZacharyLozevski/pokedexcli/models"
 )
 
 type PokemonData struct {
@@ -31,6 +33,17 @@ func parsePokemonData(rawData []byte) (*PokemonData, error) {
 	}
 
 	return pokemonData, nil
+}
+
+func parsePokemon(rawData []byte) (*models.Pokemon, error) {
+	// parse the body into a Pokemon struct
+	var pokemon *models.Pokemon
+	err := json.Unmarshal(rawData, &pokemon)
+	if err != nil {
+		return nil, err
+	}
+
+	return pokemon, nil
 }
 
 func parseNearbyPokemonData(rawData []byte) (*NearbyPokemonData, error) {
